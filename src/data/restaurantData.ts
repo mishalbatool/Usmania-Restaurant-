@@ -41,6 +41,7 @@ export const RESTAURANT_INFO = {
     facebook: 'https://www.facebook.com/nes.tle.355',
     tiktok: 'https://www.tiktok.com/@newusmaniarestaurant',
     instagram: 'https://www.instagram.com/newusmaniarestaurantchiniot/',
+    whatsapp: 'https://wa.me/923007709927?text=Assalam-o-Alaikum%20New%20Usmania%20Restaurant,%20I%20would%20like%20to%20place%20an%20order.',
   },
   googleMapsQueryUrl: 'https://www.google.com/maps/search/?api=1&query=New+Usmania+Restaurant+Main+Sargodha+Road+near+Railway+Station+Chiniot+35400+Pakistan',
   googleMapsDirectionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=New+Usmania+Restaurant+Main+Sargodha+Road+near+Railway+Station+Chiniot+35400+Pakistan',
@@ -388,3 +389,10 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     image: '/images/dining-ambiance.jpg',
   },
 ];
+
+export const getWhatsAppOrderUrl = (dishName?: string) => {
+  const message = dishName
+    ? `Assalam-o-Alaikum New Usmania Restaurant, I would like to order: ${dishName}.`
+    : 'Assalam-o-Alaikum New Usmania Restaurant, I would like to place an order / inquire about the menu.';
+  return `https://wa.me/923007709927?text=${encodeURIComponent(message)}`;
+};
