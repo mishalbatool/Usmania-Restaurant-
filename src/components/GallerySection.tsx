@@ -1,0 +1,197 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Sparkles, Maximize2, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { GALLERY_ITEMS, GalleryItem } from '../data/restaurantData';
+import { ChiniotOrnament } from './ChiniotOrnament';
+
+export const GallerySection: React.FC = () => {
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+
+  const activePhoto: GalleryItem | null =
+    selectedPhotoIndex !== null ? GALLERY_ITEMS[selectedPhotoIndex] : null;
+
+  const handleNext = useCallback(() => {
+    if (selectedPhotoIndex !== null) {
+      setSelectedPhotoIndex((selectedPhotoIndex + 1) % GALLERY_ITEMS.length);
+    }
+  }, [selectedPhotoIndex]);
+
+  const handlePrev = useCallback(() => {
+    if (selectedPhotoIndex !== null) {
+      setSelectedPhotoIndex(
+        (selectedPhotoIndex - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length
+      );
+    }
+  }, [selectedPhotoIndex]);
+
+  const handleClose = useCallback(() => {
+    setSelectedPhotoIndex(null);
+  }, []);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedPhotoIndex === null) return;
+      if (e.key === 'Escape') handleClose();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhotoIndex, handleClose, handleNext, handlePrev]);
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (selectedPhotoIndex !== null) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    }
+  }, [selectedPhotoIndex]);
+
+  return (
+    <section id="gallery" className="py-20 sm:py-24 bg-[#4B101B] text-[#FFF7E8] relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-chiniot-pattern-dark opacity-35 pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#D6A64F] mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>A Feast for the Senses</span>
+            <Sparkles className="w-3.5 h-3.5" />
+          </div>
+
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+            Our Food & Ambiance Gallery
+          </h2>
+
+          <ChiniotOrnament variant="divider" color="#D6A64F" className="my-4" />
+
+          <p className="text-base sm:text-lg text-[#FFF7E8]/80 font-normal leading-relaxed">
+            Glimpse into our slow-simmered earthen pots, sizzling skewers, tandoor-baked breads, and authentic Chinioti dining halls.
+          </p>
+        </div>
+
+        {/* Asymmetric / Masonry Style Grid */}
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {GALLERY_ITEMS.map((item, index) => {
+            // First item (Kunna) and last item (ambiance) span 2 cols on lg screens
+            const isSpan2 = index === 0 || index === 7;
+            return (
+              <div
+                key={item.id}
+                onClick={() => setSelectedPhotoIndex(index)}
+                className={`group relative rounded-2xl overflow-hidden cursor-pointer bg-[#2B1B16] border border-[#D6A64F]/30 hover:border-[#D6A64F] shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-[#D6A64F]/20 ${
+                  isSpan2 ? 'sm:col-span-2 lg:col-span-2 h-72 sm:h-80' : 'h-64 sm:h-80'
+                }`}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                  loading="lazy"
+                />
+                
+                {/* Gradient vignette */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B16]/95 via-[#2B1B16]/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+                {/* Top Category Badge */}
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-[#2B1B16]/80 backdrop-blur-md border border-[#D6A64F]/40 text-[#D6A64F] text-[11px] font-semibold uppercase tracking-wider">
+                  {item.category}
+                </div>
+
+                {/* Floating View Icon on hover */}
+                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#741F2B]/90 border border-[#D6A64F] text-[#D6A64F] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Maximize2 className="w-4 h-4" />
+                </div>
+
+                {/* Caption & Title */}
+                <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 transform translate-y-1 group-hover:translate-y-0 transition-transform">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-[#D6A64F] transition-colors leading-snug">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-[#FFF7E8]/80 line-clamp-2 mt-1">
+                    {item.caption}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      {activePhoto && selectedPhotoIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-[#2B1B16]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 transition-all animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-5 right-5 z-50 p-3 rounded-full bg-[#4B101B] hover:bg-[#741F2B] text-white border border-[#D6A64F]/60 transition-colors cursor-pointer"
+            aria-label="Close Lightbox"
+          >
+            <X className="w-6 h-6 text-[#D6A64F]" />
+          </button>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrev();
+            }}
+            className="absolute left-4 sm:left-8 z-50 p-3 rounded-full bg-[#4B101B]/80 hover:bg-[#741F2B] text-white border border-[#D6A64F]/50 transition-colors cursor-pointer"
+            aria-label="Previous Image"
+          >
+            <ChevronLeft className="w-6 h-6 text-[#D6A64F]" />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNext();
+            }}
+            className="absolute right-4 sm:right-8 z-50 p-3 rounded-full bg-[#4B101B]/80 hover:bg-[#741F2B] text-white border border-[#D6A64F]/50 transition-colors cursor-pointer"
+            aria-label="Next Image"
+          >
+            <ChevronRight className="w-6 h-6 text-[#D6A64F]" />
+          </button>
+
+          {/* Main Modal Image Box */}
+          <div
+            className="max-w-4xl w-full bg-[#350A12] border-2 border-[#D6A64F] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative max-h-[70vh] bg-black flex items-center justify-center overflow-hidden">
+              <img
+                src={activePhoto.image}
+                alt={activePhoto.title}
+                className="w-full h-full object-contain max-h-[70vh]"
+              />
+            </div>
+
+            {/* Modal Footer Description */}
+            <div className="p-5 sm:p-6 bg-[#4B101B] border-t border-[#D6A64F]/30">
+              <span className="text-[11px] uppercase tracking-wider text-[#D6A64F] font-bold">
+                {activePhoto.category} • Photo {selectedPhotoIndex + 1} of {GALLERY_ITEMS.length}
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-white mt-0.5">
+                {activePhoto.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-[#FFF7E8]/85 mt-1">
+                {activePhoto.caption}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};

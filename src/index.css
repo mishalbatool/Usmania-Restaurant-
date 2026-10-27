@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  
+  --color-maroon: #741F2B;
+  --color-maroon-hover: #8D2635;
+  --color-maroon-dark: #581520;
+  --color-burgundy: #4B101B;
+  --color-burgundy-dark: #350A12;
+  --color-gold: #D6A64F;
+  --color-gold-light: #ECC77D;
+  --color-gold-dark: #B8852B;
+  --color-cream: #FFF7E8;
+  --color-cream-soft: #F9EED9;
+  --color-cream-card: #FFFDF9;
+  --color-darkbrown: #2B1B16;
+  --color-darkbrown-muted: #5E463E;
+}
+
+/* Subtle traditional Pakistani geometric / jaali pattern overlay */
+.bg-chiniot-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgba(214, 166, 79, 0.15) 1.5px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-chiniot-pattern-dark {
+  background-image: radial-gradient(circle at 1px 1px, rgba(214, 166, 79, 0.09) 1.5px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF7E8;
+}
+::-webkit-scrollbar-thumb {
+  background: #D6A64F;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #741F2B;
+}

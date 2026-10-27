@@ -1,0 +1,6 @@
+{
+  "name": "New Usmania Restaurant – Chiniot",
+  "description": "Authentic Pakistani dining demo featuring signature slow-cooked clay-pot Mutton Kunna, Karahi, Handi, Biryani, BBQ, and traditional Chinioti hospitality.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
